@@ -8,7 +8,7 @@ const LandingPage = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#fefaf6] p-4 text-[#1e1e1e]">
       <header className="text-center mb-8">
         <h1 className="text-5xl font-bold mb-4">Welcome to Power Resume Builder</h1>
         <p className="text-lg mb-4">Create a professional resume in minutes with our intuitive builder and AI assistance.</p>
@@ -16,12 +16,12 @@ const LandingPage = () => {
           {user ? (
             <>
               <Link to="/resume-builder">
-                <Button variant="primary" className="bg-white text-blue-600 hover:bg-gray-200">
+                <Button variant="default" className="bg-white text-[#1e1e1e] hover:bg-[#f1f1f1]">
                   <FileText className="mr-2 h-4 w-4" /> Go to Resume Builder
                 </Button>
               </Link>
               <Link to="/profile">
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+                <Button variant="outline" className="border-[#1e1e1e] text-[#1e1e1e] hover:bg-[#1e1e1e] hover:text-white">
                   <User className="mr-2 h-4 w-4" /> Profile
                 </Button>
               </Link>
@@ -29,14 +29,17 @@ const LandingPage = () => {
           ) : (
             <>
               <Link to="/auth">
-                <Button variant="primary" className="bg-white text-blue-600 hover:bg-gray-200">
+                <Button variant="default" className="bg-white text-[#1e1e1e] hover:bg-[#f1f1f1]">
                   <User className="mr-2 h-4 w-4" /> Login
                 </Button>
               </Link>
               <Link to="/auth">
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button variant="default" className="bg-white text-[#1e1e1e] hover:bg-[#f1f1f1]">
                   <User className="mr-2 h-4 w-4" /> Sign Up
                 </Button>
+                {/* <Button variant="default" className="border-[#1e1e1e] text-[#1e1e1e] hover:bg-[#1e1e1e] hover:text-white">
+                  <User className="mr-2 h-4 w-4" /> Sign Up
+                </Button> */}
               </Link>
             </>
           )}
@@ -46,11 +49,11 @@ const LandingPage = () => {
         <h2 className="text-3xl font-semibold mb-4">Our Services</h2>
         <p className="text-lg mb-4">We provide the following services:</p>
         <ul className="list-disc list-inside text-left max-w-md mx-auto">
-          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-green-400" /> AI-Powered Resume Builder</li>
-          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-green-400" /> ATS Checker</li>
-          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-green-400" /> Professional Templates</li>
-          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-green-400" /> Live Preview</li>
-          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-green-400" /> PDF Export</li>
+          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-pink-500" /> AI-Powered Resume Builder</li>
+          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-pink-500" /> ATS Checker</li>
+          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-pink-500" /> Professional Templates</li>
+          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-pink-500" /> Live Preview</li>
+          <li className="mb-2"><CheckCircle className="inline-block mr-2 h-5 w-5 text-pink-500" /> PDF Export</li>
         </ul>
       </section>
     </div>

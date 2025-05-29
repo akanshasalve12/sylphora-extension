@@ -13,9 +13,10 @@ import { useAuthStore } from '@/stores/authStore';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: (userData: { name: string; email: string }) => void; 
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +40,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (!user) throw new Error('No user returned from auth');
         
         setUser(user);
+        onSuccess({ name: user.user_metadata?.full_name || user.email, email: user.email });
+        
         navigate('/resume-builder');
       } else {
         const { data: { user }, error } = await supabase.auth.signUp({
@@ -55,6 +58,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (!user) throw new Error('No user returned from auth');
         
         toast.success("Please check your email to verify your account");
+        onSuccess({ name: name, email: email });
         navigate('/resume-builder');
       }
       

@@ -13,6 +13,7 @@ import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
 import { supabase } from '@/supabaseClient';
 import { useAuthStore } from '@/stores/authStore';
+import JobDescription from './pages/JobDescription';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ function App() {
               <Route path="/resume-builder" element={user ? <Index /> : <Navigate to="/auth" />} />
               <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/auth" />} />
               <Route path="*" element={<NotFound />} />
+              <Route path='/job-description' element={<JobDescription />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

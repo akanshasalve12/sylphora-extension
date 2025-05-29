@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ResumeForm from "@/components/ResumeForm";
-import ResumePreview from "@/components/ResumePreview";
+import ResumePreview from "@/pages/ResumePreview";
 import { ResumeData, resumeSchema } from "@/utils/resumeSchema";
 import { exportToPdf } from "@/utils/pdfUtils";
 import { exportToDocx } from "@/utils/docxUtils";
@@ -32,6 +32,12 @@ import { FormProvider } from '@/components/FormProvider';
 import { useAuthStore } from '@/stores/authStore';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+const templates = [
+  { id: "classic", label: "Classic" },
+  { id: "modern", label: "Modern" },
+  { id: "creative", label: "Creative" },
+];
+
 const Index = () => {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [activeTab, setActiveTab] = useState("edit");
@@ -40,6 +46,7 @@ const Index = () => {
   const [selectedFont, setSelectedFont] = useState("Arial");
   const [fontSize, setFontSize] = useState("12");
   const [pageSize, setPageSize] = useState("A4");
+  const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const { user, signOut } = useAuthStore();
   const navigate = useNavigate();
   
@@ -90,9 +97,7 @@ const Index = () => {
     await exportToPdf("resume-preview-container", "resume.pdf", pageSize, selectedFont, fontSize);
   };
 
-  const handleExportDOCX = async () => {
-    await exportToDocx("resume-preview-container", "resume.docx", selectedFont, fontSize);
-  };
+  
 
   const handleAuthSuccess = (userData: { name: string; email: string }) => {
     toast.success(`Welcome, ${userData.name}!`);
@@ -199,9 +204,7 @@ const Index = () => {
                           <Button onClick={handleExportPDF}>
                             <Download className="h-4 w-4 mr-2" /> Export PDF
                           </Button>
-                          <Button onClick={handleExportDOCX}>
-                            <Download className="h-4 w-4 mr-2" /> Export DOCX
-                          </Button>
+                          
                         </div>
                       </div>
                       
@@ -220,154 +223,162 @@ const Index = () => {
                         </TabsContent>
                         
                         <TabsContent value="upload">
-                          <ResumeUploader 
-                            onResumeDataExtracted={(data) => {
-                              toast.success("Resume data extracted successfully!");
-                              handleFormChange(data);
-                            }} 
+                          <ResumeUploader
+                            onUpload={(data) => setResumeData(data)}
                           />
-                        </TabsContent>
-                      </Tabs>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">Additional Sections</h2>
-                      
-                      <Tabs defaultValue="hobbies">
-                        <TabsList className="w-full mb-4">
-                          <TabsTrigger value="hobbies" className="flex-1">Hobbies</TabsTrigger>
-                          <TabsTrigger value="achievements" className="flex-1">Achievements</TabsTrigger>
-                          <TabsTrigger value="certificates" className="flex-1">Certificates</TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="hobbies">
-                          <HobbiesSection />
-                        </TabsContent>
-                        
-                        <TabsContent value="achievements">
-                          <AchievementsSection />
-                        </TabsContent>
-                        
-                        <TabsContent value="certificates">
-                          <CertificatesSection />
                         </TabsContent>
                       </Tabs>
                     </CardContent>
                   </Card>
                 </div>
                 
-                <div className="w-full lg:w-2/5 hidden lg:block">
-                  {resumeData && (
-                    <div className="sticky top-8">
+                <div className="w-full lg:w-2/5 flex flex-col gap-4">
+                  <Card>
+                    <CardContent className="p-6">
+                      <h2 className="text-xl font-semibold mb-4">Customize</h2>
+                      
+                      <div className="space-y-4">
+                        {/* Font Select */}
+                        <div>
+                          <label htmlFor="font-select" className="block mb-1 font-medium">Font</label>
+                          <Select
+                            value={selectedFont}
+                            onValueChange={setSelectedFont}
+                          >
+                            <SelectTrigger id="font-select">
+                              <SelectValue placeholder="Select font" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Arial">Arial</SelectItem>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Tahoma">Tahoma</SelectItem>
+                              <SelectItem value="Verdana">Verdana</SelectItem>
+                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        {/* Font Size Select */}
+                        <div>
+                          <label htmlFor="font-size-select" className="block mb-1 font-medium">Font Size (px)</label>
+                          <Select
+                            value={fontSize}
+                            onValueChange={setFontSize}
+                          >
+                            <SelectTrigger id="font-size-select">
+                              <SelectValue placeholder="Select font size" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[10, 11, 12, 13, 14, 15, 16].map(size => (
+                                <SelectItem key={size} value={size.toString()}>
+                                  {size}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        {/* Page Size Select */}
+                        <div>
+                          <label htmlFor="page-size-select" className="block mb-1 font-medium">Page Size</label>
+                          <Select
+                            value={pageSize}
+                            onValueChange={setPageSize}
+                          >
+                            <SelectTrigger id="page-size-select">
+                              <SelectValue placeholder="Select page size" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="A4">A4</SelectItem>
+                              <SelectItem value="Letter">Letter</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        {/* Template Select */}
+                        <div>
+                        <label htmlFor="template-select" className="block mb-1 font-medium">Template</label>
+                        <Select
+                        value={selectedTemplate}
+                        onValueChange={setSelectedTemplate}
+                        >
+                        <SelectTrigger id="template-select">
+                        <SelectValue placeholder="Select template" />
+                        </SelectTrigger>
+                        <SelectContent>
+                         {templates.map((template) => (
+                         <SelectItem key={template.id} value={template.id}>
+                        {template.label}
+                       </SelectItem>
+                         ))}
+                         </SelectContent>
+                           </Select>
+                          </div>
+
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                      <CardContent>
                       <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
-                      <div className="mb-4">
-                        <Select 
-                          value={selectedFont}
-                          onValueChange={(value) => setSelectedFont(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Font" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Arial">Arial</SelectItem>
-                            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-                            <SelectItem value="Courier New">Courier New</SelectItem>
-                            <SelectItem value="Georgia">Georgia</SelectItem>
-                            <SelectItem value="Verdana">Verdana</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="mb-4">
-                        <Select 
-                          value={fontSize}
-                          onValueChange={(value) => setFontSize(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Font Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="10">10</SelectItem>
-                            <SelectItem value="12">12</SelectItem>
-                            <SelectItem value="14">14</SelectItem>
-                            <SelectItem value="16">16</SelectItem>
-                            <SelectItem value="18">18</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="mb-4">
-                        <Select 
-                          value={pageSize}
-                          onValueChange={(value) => setPageSize(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Page Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="A4">A4</SelectItem>
-                            <SelectItem value="Letter">Letter</SelectItem>
-                            <SelectItem value="Legal">Legal</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <ResumePreview resumeData={resumeData} selectedFont={selectedFont} fontSize={fontSize} />
-                    </div>
-                  )}
+                      {resumeData ? (
+                      <div
+                      id="resume-preview-container"
+                      className="border border-gray-300 rounded-md p-4 overflow-auto"
+                      style={{
+                      maxHeight: "600px",
+                      fontFamily: selectedFont,
+                      fontSize: `${fontSize}px`, // make sure fontSize is a number or string of number
+                       }}
+                          >
+                       <ResumePreview
+                        resumeData={resumeData}
+                       selectedFont={selectedFont}
+                        fontSize={fontSize}
+                       selectedTemplate={selectedTemplate} // <-- add this if ResumePreview requires it
+                        />
+                        </div>
+                        ) : (
+                        <p className="text-muted-foreground">
+                        No resume data to preview. Please build or upload your resume.
+                        </p>
+                        )}
+                         </CardContent>
+                      </Card>
+
                 </div>
               </div>
+              
+              <HobbiesSection />
+              <AchievementsSection />
+              <CertificatesSection />
             </TabsContent>
             
-            <TabsContent value="preview" className="space-y-8 mt-0">
+            <TabsContent value="preview">
+              {/* Optionally a full-page preview here */}
               {resumeData ? (
-                <div className="flex flex-col items-center">
-                  <div className="max-w-2xl w-full">
-                    <div className="flex justify-end space-x-4 mb-4">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setActiveTab("edit")}
-                        className="transition-all duration-300 ease-apple"
-                      >
-                        Back to Edit
-                      </Button>
-                      <Button 
-                        onClick={handleExportPDF}
-                        className="transition-all duration-300 ease-apple"
-                      >
-                        <Download className="mr-2 h-4 w-4" /> Export PDF
-                      </Button>
-                      <Button 
-                        onClick={handleExportDOCX}
-                        className="transition-all duration-300 ease-apple"
-                      >
-                        <Download className="mr-2 h-4 w-4" /> Export DOCX
-                      </Button>
-                    </div>
-                    
-                    <Card className="mb-8 neomorphic">
-                      <CardContent className="p-0">
-                        <ResumePreview resumeData={resumeData} selectedFont={selectedFont} fontSize={fontSize} />
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
+                <ResumePreview
+                  resumeData={resumeData}
+                  selectedFont={selectedFont}
+                  fontSize={fontSize}
+                  selectedTemplate={selectedTemplate}
+                />
               ) : (
-                <div className="text-center p-8">
-                  <h3 className="text-xl mb-2">No resume data yet</h3>
-                  <p className="text-muted-foreground mb-4">Start by filling out your information in the Edit tab.</p>
-                  <Button onClick={() => setActiveTab("edit")}>Go to Edit</Button>
-                </div>
+                <p className="text-muted-foreground text-center mt-10">
+                  No resume data to preview.
+                </p>
               )}
             </TabsContent>
           </Tabs>
         </div>
-
-        <AuthModal 
-          isOpen={isAuthModalOpen} 
-          onClose={() => setIsAuthModalOpen(false)} 
-          onSuccess={handleAuthSuccess}
-        />
       </FormProvider>
+      
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };

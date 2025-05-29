@@ -17,11 +17,12 @@ const Profile = () => {
   };
 
   const handleExportPDF = async () => {
-    await exportToPdf("resume-preview-container", "resume.pdf");
+    // You can adjust pageSize and fontSize as needed
+    await exportToPdf("resume-preview-container", "resume.pdf", "A4", selectedFont, "12");
   };
 
   const handleExportDOCX = async () => {
-    await exportToDocx("resume-preview-container", "resume.docx");
+    await exportToDocx("resume-preview-container", "resume.docx", selectedFont, "12");
   };
 
   return (

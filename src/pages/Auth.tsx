@@ -7,14 +7,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ArrowLeft, UserCheck } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 
+
 const Auth = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(true);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const navigate = useNavigate();
 
+
   const handleAuthSuccess = (userData: { name: string; email: string }) => {
     setUser(userData);
     setIsAuthModalOpen(false);
+     navigate("/build-resume"); // ⬅️ Add this line
   };
 
   const handleSignOut = () => {

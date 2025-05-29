@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/authStore';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: (userData: { name: string; email: string }) => void;
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
@@ -67,21 +68,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleGithubAuth = async () => {
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
         options: {
           redirectTo: window.location.origin,
         },
       });
-      
+
       if (error) throw error;
-      
-      // GitHub auth success handling will be done through onAuthStateChange
+
+      // Success will redirect and handled via onAuthStateChange
     } catch (error: any) {
-      console.error("GitHub auth error:", error);
-      toast.error(error.message || "GitHub authentication failed");
+      console.error(`${provider} auth error:`, error);
+      toast.error(error.message || `${provider} authentication failed`);
     }
   };
 
@@ -151,11 +152,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button" disabled={isLoading}>
-                <Mail className="mr-2 h-4 w-4" />
-                Gmail
+             <Button variant="outline" type="button" onClick={() => handleOAuthSignIn('google')} disabled={isLoading}>
+             <span className="mr-2 text-lg">🌐</span>
+               Google
               </Button>
-              <Button variant="outline" type="button" onClick={handleGithubAuth} disabled={isLoading}>
+
+              <Button variant="outline" type="button" onClick={() => handleOAuthSignIn('github')} disabled={isLoading}>
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
@@ -215,11 +217,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button" disabled={isLoading}>
+              <Button variant="outline" type="button" onClick={() => handleOAuthSignIn('google')} disabled={isLoading}>
                 <Mail className="mr-2 h-4 w-4" />
-                Gmail
+                Google
               </Button>
-              <Button variant="outline" type="button" onClick={handleGithubAuth} disabled={isLoading}>
+              <Button variant="outline" type="button" onClick={() => handleOAuthSignIn('github')} disabled={isLoading}>
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
